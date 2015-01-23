@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html lang="ca-es">
+<body>
+{% if user.is_authenticated %}
+	<h1>Proxylog {{ classroom_name }} -> {{ ip_network }}.0 -> ({{ moment }})</h1>
+	<h4><a href="../../proxylog/aula-{{ classroom_id }}">Qualsevol moment</a> | <a href="last-5-minutes">Darrers 5 minuts</a> | <a href="last-30-minutes">Darrers 30 minuts</a> | <a href="last-60-minutes">Darrera hora</a> | <a href="last-1440-minutes">Darrer dia</a> | <a href="last-10080-minutes">Darrera setmana</a> | <a href="last-43200-minutes">Darrer mes</a></h4>
+	{% if url_proxy_list %}
+	 <ol>    
+	
+	    {% for value in url_proxy_list %}
+	    	
+	    	<li>{{ value.domain_destination__count }} <a href="{{ value.domain_destination }}"><span>{{ value.domain_destination }}</span></a></li>        
+	    {% endfor %}
+	    </ol>
+	{% else %}
+	    
+	    <span class="ERROR">ERROR</span>
+	{% endif %}
+{% else %}	
+	<script>alert("ANDE VAS TONTUNO!");</script>
+{% endif %}
+</body>
+</html>

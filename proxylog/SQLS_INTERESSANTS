@@ -1,0 +1,26 @@
+LES 30 WEBS MES VISITADES DE TOT EL IES
+---------------------------------------
+
+SELECT COUNT( * ) AS hits, domain_destination
+FROM  `proxylog_proxyentry` 
+GROUP BY domain_destination
+ORDER BY hits DESC 
+LIMIT 0 , 30
+
+LES 30 WEBS MES VISITADES DE AULA 21
+---------------------------------------
+SELECT COUNT( * ) AS hits, domain_destination
+FROM  `proxylog_proxyentry` 
+WHERE ip_src LIKE  "192.168.21%"
+GROUP BY domain_destination
+ORDER BY hits DESC 
+LIMIT 0 , 30
+
+LES 30 WEBS MES VISITADES DE AULA 22
+---------------------------------------
+SELECT COUNT( * ) AS hits, domain_destination
+FROM  `proxylog_proxyentry` 
+WHERE ip_src LIKE  "192.168.22%"
+GROUP BY domain_destination
+ORDER BY hits DESC 
+LIMIT 0 , 30

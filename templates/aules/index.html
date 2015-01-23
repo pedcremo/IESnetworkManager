@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ca-es">
+<head>
+	<meta charset="utf-8">
+	<title>IES l'Estació Network Manager</title>
+	<link rel="stylesheet" href="jquery/development-bundle/themes/base/jquery.ui.all.css">
+	
+	<script src="jquery/js/jquery-1.7.2.min.js"></script>
+	<script src="jquery/development-bundle/ui/jquery.ui.core.js"></script>
+	<script src="jquery/development-bundle/ui/jquery.ui.widget.js"></script>
+	<script src="jquery/development-bundle/ui/jquery.ui.accordion.js"></script>
+	<script src="jquery/development-bundle/ui/jquery.ui.tabs.js"></script>
+	<script src="jquery/development-bundle/ui/jquery.ui.button.js"></script>
+	<link rel="stylesheet" href="jquery/css/demos.css">
+	
+	<script>
+
+	function restrict(aula){
+		{% if user.is_authenticated %}
+			if ($('input[id="'+aula+'"]').attr('checked') == "checked") {			
+				$('select[id="'+aula+'"]').attr('style',"visibility:visible;");
+			}else{
+				$('select[id="'+aula+'"]').attr('style',"visibility:hidden;");
+				$("span#"+aula).load('remove_list_network_device/'+aula);
+			}	
+		{% else %}			
+				alert("ANDE VAS TONTUNO!");
+		{% endif %}			
+	}
+	//Eixim per MacroLan directiva / sala professors
+	function barra_lliure(aula){
+		{% if user.is_authenticated %}
+		        if ($('input[id="barra-'+aula+'"]').attr('checked') == "checked") {                   
+				alert("set_barra_lliure/"+aula+"/ON");
+		                $("span#"+aula).load('set_barra_lliure/'+aula+'/ON');
+
+		        }else{
+				alert("set_barra_lliure/"+aula+"/OFF");
+		                $("span#"+aula).load('set_barra_lliure/'+aula+'/OFF');
+		        }    
+		{% else %}			
+				alert("ANDE VAS TONTUNO!");
+		{% endif %}                           
+        }
+
+	function apply_restriction(aula){
+		{% if user.is_authenticated %}
+			alert('Aplicada restricció parcial a '+$('select[id="'+aula+'"] option:selected').val());
+			$("span#"+aula).load('add_list_network_device/'+aula+'/'+$('select[id="'+aula+'"] option:selected').val());
+		{% else %}			
+				alert("ANDE VAS TONTUNO!");
+		{% endif %} 
+		//alert($('select[id="'+aula+'"] option:selected').val());	
+	}
+
+	$(function() {
+		$( "#tabs" ).tabs();
+		$( "input:submit, a, button", ".demo" ).button();
+		$( "button.internet" ).live("click",function() {
+		
+			{% if user.is_authenticated %}	
+			
+			//console.log($(this).attr('class'));
+
+			//Recollim el nom de l'aula al que pertany el boto INTERNET
+			aula=$(this).attr('id');
+						
+			//Switch ON internet
+			if ($(this).attr('class')=='internet ui-button-off'){
+				$(this).button( "option", "disabled", false );
+				$(this).removeClass("internet ui-button-off");
+				$(this).addClass("internet ui-button");
+				$('h3[id="partial-'+aula+'"]').attr('style',"visibility:visible;")
+				$('input[id="'+aula+'"]').attr('style',"visibility:visible;")
+				$('select[id="'+aula+'"]').attr('style',"visibility:hidden;");
+
+				$('div[id*="'+aula+'"]').find('.ui-pc-forbidden').each(function(index) {				
+					$(this).removeClass("ui-pc-forbidden");
+					$(this).addClass("ui-pc-on");					
+					$(this).find('img').attr("src", "images/pc_mini.png");
+    				});
+				
+				//alert("MERDA");
+				$("span#"+aula).load('draw_classroom/'+aula+'/ON');
+				//$('div[id*="'+aula+'"]').load('drawing_classroom/'+aula+'/ON');
+				
+				//alert("MERDA 2");
+			
+			//Switch OFF internet
+			}else{
+				$(this).button("option","disabled",true);
+				$(this).removeClass("internet ui-button");
+				$(this).addClass("internet ui-button-off");
+				$('h3[id="partial-'+aula+'"]').attr('style',"visibility:hidden;")
+				$('input[id="'+aula+'"]').attr('style',"visibility:hidden;")
+				$('select[id="'+aula+'"]').attr('style',"visibility:hidden;");
+				
+				$('div[id*="'+aula+'"]').find('.ui-pc-on').each(function(index) {				
+					$(this).removeClass("ui-pc-on");
+					$(this).addClass("ui-pc-forbidden");					
+					$(this).find('img').attr("src", "images/pc_mini_forbidden.png");    					
+				});
+				$("span#"+aula).load('draw_classroom/'+aula+'/OFF');
+			}//END IF	
+			
+			{% else %}
+				alert("NO TENS PERMISOS. Autentica't!");
+			{% endif %}
+		});
+		$( "button.blockPC" ).live("click",function() {
+			{% if user.is_authenticated %}
+				//Recollim el id del PC al que pertany el boto Block
+				computer_id=$(this).attr('id');
+				aula=$(this).attr('aula');
+				is_internet_in_classroom=true
+
+				if ($('button.internet[id="'+aula+'"]').attr('class')=='internet ui-button-off'){
+					is_internet_in_classroom=false;				
+				}
+
+				//alert("computer "+computer_id);
+				capa_computer=$('div[id="computer-'+computer_id+'"]');
+				//alert(capa_computer);
+				//Prohibim accés a Internet al PC
+				if (capa_computer.attr('class')=='ui-pc-on'){	
+					//alert("POCO O");			
+					capa_computer.removeClass("ui-pc-on");
+					capa_computer.addClass("ui-pc-forbidden");
+					capa_computer.find('img').attr("src", "images/pc_mini_forbidden.png");
+					capa_computer.find('button').removeClass("blockPC ui-button-pc-lock");
+					capa_computer.find('button').addClass("blockPC ui-button-pc-unlock");
+					//$(this).value="UNLOCK";
+					$("span#"+aula).load('block_by_mac/'+computer_id+'/OFF');
+
+				//Retirem Prohibició accés a Internet al PC
+				}else{
+					//alert("POCOYO");
+					capa_computer.removeClass("ui-pc-forbidden");
+					capa_computer.addClass("ui-pc-on");
+					capa_computer.find('img').attr("src", "images/pc_mini.png");
+					capa_computer.find('button').removeClass("blockPC ui-button-pc-unlock");
+					capa_computer.find('button').addClass("blockPC ui-button-pc-lock");
+					$("span#"+aula).load('block_by_mac/'+computer_id+'/ON');
+					if (is_internet_in_classroom==false){
+						$("span#"+aula).load('allow_by_mac/'+computer_id+'/ON');
+						//alert("Ara podriem permetre explicitament Internet a "+computer_id);
+					}
+				}
+			{% else %}			
+				alert("ANDE VAS TONTUNO!");
+			{% endif %}
+		});
+	});
+	
+	</script>
+	
+	<style>
+		span.ERROR{
+			color: #f00;
+			margin:4px;
+			padding:5px;
+			border:1px solid #ff0000;
+			background: #fdf790;
+		}
+		span.hidden{
+		}
+		/* Internet button */
+		.ui-button {
+		 	color: #fff;
+		 	border:none;
+		 	height:41px;
+		 	width: 101px;	
+		 	background: #ffffff url("images/on.png") repeat-x;
+		}
+		.blockPC {
+		 	color: #000;
+		 	border:1px solid #999999;
+			font-size:small;
+		 	height:21px;
+		 	width: 95px;	
+		 	background: #dedede;
+		}
+		.ui-button-off {
+		 	color: #fff;
+		 	border:none;
+		 	height:41px;
+		 	width: 101px;	
+		 	background: #ffffff url("images/off.png") repeat-x;
+		}
+		.ui-button-pc-lock{
+			color: #000;
+		 	border:1px solid #999999;
+			font-size:small;
+		 	height:21px;
+		 	width: 95px;	
+		 	background: #dedede url("images/cadenat_tancat.jpg") no-repeat left;
+		}	
+		.ui-button-pc-unlock{
+			color: #000;
+		 	border:1px solid #999999;
+			font-size:small;
+		 	height:21px;
+		 	width: 95px;	
+		 	background: #dedede url("images/cadenat_obert.jpg") no-repeat left;
+		}	
+
+		/* PC grid box */
+		div.pc-box{
+				
+				
+				background: #000000;
+			}
+		div.ui-pc-forbidden
+  		{
+			float:left;			
+  			margin:2px;
+  			border:0px solid #ff00ff;
+  			height:100px;
+  			width:100px;			
+  			text-align:center;
+		}
+		
+		div.ui-pc-on
+  			{
+			float:left;			
+  			margin:2px;
+  			border:0px solid #0000ff;
+  			height:100px;
+  			width:100px;			
+  			text-align:center;
+  			}
+		div.ui-pc-on img
+  			{
+  			
+  			margin:3px;
+  			border:0px solid #ffffff;
+  			}
+		div.ui-pc-on a:hover img
+  			{
+  			border:1px solid #0000ff;
+  			}
+		div.desc
+  			{
+  			text-align:center;
+  			font-weight:normal;
+  			width:80px;
+  			margin:2px;
+  			}
+	</style>
+</head>
+<body>
+
+<h1> <img src='images/logo_ies.png' align="center"/>&nbsp;&nbsp;&nbsp;&nbsp;GESTIÓ CONNEXIÓ A INTERNET DE LES AULES</h1>
+
+
+{% if user.is_authenticated %}
+    <p>Benvingut, <b>{{ user.first_name }} {{ user.last_name }}</b>({{ user.username }}). Tens permís per gestionar la connexió a INTERNET de les aules.<a href="logout"> LOGOUT</a></p>
+{% else %}
+    <p>Benvingut, ANÒNIM. Per favor <a href="login">autentica't si vols fer ús</a> de l'aplicació.</p>
+{% endif %}
+
+{% if classroom_list %}
+    
+    <div id="tabs" style="overflow:hidden;"> 
+    
+    <ul>    
+    {% for key,value in classroom_list.items %}
+    		
+    		<li><a href="drawing_classroom/aula-{{key}}/INFO" id="aula-{{key}}"><span>{{ value.name }}</span></a></li>        
+    {% endfor %}
+    </ul>
+    
+    
+    
+    </div>
+    
+{% else %}
+    
+    <span class="ERROR">{{error_layer}}</span>
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+//Start the server
+python manage.py runserver 192.168.5.10:8000
+
+
+IMPORTANT: Quan crees un nom per a una regla de firewall no utilitzes accents ni símbols estranys
+
+
+El views.py de proxylog està molt HARDWIRED (merda de codi) cal pegar-li una bona revisada.
+Cal dissenyar tests

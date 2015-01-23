@@ -1,0 +1,17 @@
+
+-i18n project with English, Valencià and Spanish support
+-Make an installer for the application. Now it's a very complicated proces that user should follow in order
+to run the project
+- Document classes with epydoc
+- Refactor the code. Especially GenericRouter so it can "quack" like the Duck interface
+- Add support for (iptables/linux) network devices
+- Code classroom classes to support block by mac so if we don't have an ip range to block this is the last choice to grasp
+
+- Write user documentation:
+	-From the network's administrator perspective
+	-From the developer ot student learning how to code following design patterns and good practices.
+	-From the final user perspective that doesn't want to be aware of any technical knowledge
+
+- Create, for the setup, a set of SQL statements with example data to be loaded in order to be ready to use
+the application from the first step.
+ 

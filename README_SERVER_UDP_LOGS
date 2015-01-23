@@ -1,0 +1,6 @@
+Utilitzem aquest servidor UDP per a rebre la informació de logging del proxy de la nostra xarxa (squid, webproxy mikrotik) per recollir per quines planes naveguen els estudiants i guardar així aquesta informació en la base de dades amb propòsits estadístics.
+
+Per arrancar el servidor i debugejar el que passa "sudo python server_udp_logs_webproxy.py &"
+Per arrancar el servidor en segon pla "sudo python server_udp_logs_webproxy.py"
+
+NOTA: Cal matar syslog-ng per a que no escolte al mateix port que el server

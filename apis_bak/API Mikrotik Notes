@@ -1,0 +1,30 @@
+﻿Per consultar en un mikrotik device si existeix un PC amb una MAC concreta per tal
+de poder saber la seua IP i si està connectat
+
+<<< /ip/dhcp-server/lease/print
+<<< ?mac-address=00:23:54:C1:D5:01
+
+Per bloquejar per mac un ordinador
+
+/ip/firewall/filter/add 
+=chain=input 
+=action=drop 
+=src-mac-address= aa:bb:cc:dd:ee:ff
+
+
+Per bloquejar per src ip un aula 
+
+/ip/firewall/filter/add
+=chain=input
+=action=drop
+=comment=id34434
+=src-address=192.168.24.0/24
+
+
+Per consultar una regla que complisca parametre filtre
+/ip/firewall/filter/print
+?comment=id34434
+
+Per esborrar una regla
+/ip/firewall/filter/remove
+=.id=*26
