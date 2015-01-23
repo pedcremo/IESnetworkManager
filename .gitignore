@@ -16,3 +16,5 @@ Thumbs.db
 *.pyc
 #Django settings.py
 settings.py
+#Project database
+ies_network.sql
