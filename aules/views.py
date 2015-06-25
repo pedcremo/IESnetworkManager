@@ -8,7 +8,8 @@ from aules.models import UrlList
 from aules.models import FirewallRule
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login,logout
-from django.views.generic.simple import direct_to_template
+#from django.views.generic.simple import direct_to_template
+from django.views.generic.base import TemplateView
 from RosAPI import Core,Networking
 from MikrotikRouter import MikrotikRouter
 from pprint import pprint
@@ -139,10 +140,12 @@ def mylogin(request):
         return HttpResponseRedirect('/')
       else:
         # disabled account
-        return direct_to_template(request, 'aules/inactive_account.html')
+        #return direct_to_template(request, 'aules/inactive_account.html')
+        return TemplateView.as_view(template_name='aules/inactive_account.html')
     else:
       # invalid login
-      return direct_to_template(request, 'aules/invalid_login.html')
+      #return direct_to_template(request, 'aules/invalid_login.html')
+	return TemplateView.as_view(template_name='aules/invalid_login.html')
       
 def mylogout(request):
   logout(request)
